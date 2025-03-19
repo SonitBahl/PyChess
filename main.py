@@ -1,5 +1,6 @@
 import pygame
 import chess
+import home_screen
 
 # Initialize Pygame
 pygame.init()
@@ -37,33 +38,39 @@ def draw_pieces():
                 text_rect = text.get_rect(center=(col * SQUARE_SIZE + SQUARE_SIZE // 2, row * SQUARE_SIZE + SQUARE_SIZE // 2))
                 screen.blit(text, text_rect)
 
-# Main loop
-running = True
-selected_square = None
-moves = []
-while running:
-    draw_board()
-    draw_pieces()
-    pygame.display.flip()
+# Function to run the chess game
+def run_game():
+    running = True
+    selected_square = None
+    moves = []
     
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            x, y = event.pos
-            col, row = x // SQUARE_SIZE, y // SQUARE_SIZE
-            square = chess.square(col, 7 - row)
-            
-            if selected_square is None:
-                piece = board.piece_at(square)
-                if piece and (piece.color == board.turn):
-                    selected_square = square
-                    moves = [move for move in board.legal_moves if move.from_square == selected_square]
-            else:
-                move = chess.Move(selected_square, square)
-                if move in moves:
-                    board.push(move)
-                selected_square = None
-                moves = []
+    while running:
+        draw_board()
+        draw_pieces()
+        pygame.display.flip()
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                x, y = event.pos
+                col, row = x // SQUARE_SIZE, y // SQUARE_SIZE
+                square = chess.square(col, 7 - row)
                 
-pygame.quit()
+                if selected_square is None:
+                    piece = board.piece_at(square)
+                    if piece and (piece.color == board.turn):
+                        selected_square = square
+                        moves = [move for move in board.legal_moves if move.from_square == selected_square]
+                else:
+                    move = chess.Move(selected_square, square)
+                    if move in moves:
+                        board.push(move)
+                    selected_square = None
+                    moves = []
+                    
+    pygame.quit()
+
+if __name__ == "__main__":
+    home_screen.home_screen() 
+    run_game()  
